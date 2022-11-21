@@ -149,14 +149,19 @@ public class ThemeOverlayController extends CoreStartable implements Dumpable {
     // Determines if we should ignore THEME_CUSTOMIZATION_OVERLAY_PACKAGES setting changes.
     private boolean mSkipSettingChange;
 
-    private final ConfigurationListener mConfigurationListener =
-            new ConfigurationListener() {
+    private boolean isBlackThemeEnabled() {
+        return mSecureSettings.getInt(Settings.Secure.SYSTEM_BLACK_THEME, 0) == 1;
+    }
+
+
+    private final ConfigurationListener mConfigurationListener = new ConfigurationListener() {
                 @Override
                 public void onUiModeChanged() {
-                    Log.i(TAG, "Re-applying theme on UI change");
-                    reevaluateSystemTheme(true /* forceReload */);
-                }
-            };
+                    if (isBlackThemeEnabled()) {
+                        reevaluateSystemTheme(true /* forceReload */);
+            }
+        }
+    };
 
     private final DeviceProvisionedListener mDeviceProvisionedListener =
             new DeviceProvisionedListener() {
@@ -685,8 +690,7 @@ public class ThemeOverlayController extends CoreStartable implements Dumpable {
 
         boolean nightMode = (mContext.getResources().getConfiguration().uiMode
                 & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
-        boolean isBlackTheme = mSecureSettings.getInt(Settings.Secure.SYSTEM_BLACK_THEME, 0) == 1
-                                && nightMode;
+        boolean isBlackTheme = isBlackThemeEnabled() && nightMode;
 
         mThemeManager.setIsBlackTheme(isBlackTheme);
 
