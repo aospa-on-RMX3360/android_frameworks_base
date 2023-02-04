@@ -391,7 +391,6 @@ public class ThemeOverlayController extends CoreStartable implements Dumpable {
         mUserTracker = userTracker;
         mResources = resources;
         mWakefulnessLifecycle = wakefulnessLifecycle;
-        mConfigurationController = configurationController;
         dumpManager.registerDumpable(TAG, this);
     }
 
